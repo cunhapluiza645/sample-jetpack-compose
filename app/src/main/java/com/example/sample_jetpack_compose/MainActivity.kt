@@ -81,7 +81,8 @@ fun PersonsTelekomApp() {
                             val imageRes = backStackEntry.arguments?.getString("imageRes")?.toInt() ?: 0
 
                             PersonDetailScreen(
-                                person = Person(name, email, phone, imageRes)
+                                person = Person(name, email, phone, imageRes),
+                                navController = navController
                             )
                         }
                     }
