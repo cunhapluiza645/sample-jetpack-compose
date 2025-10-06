@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "sample-jetpack-compose"
 include(":app")
- 
+include(":benchmark")
