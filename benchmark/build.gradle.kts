@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.test")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -8,40 +8,48 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 23
+        targetSdk = 36
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
 
+        // Suppress Macrobenchmark debuggable warning
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "DEBUGGABLE"
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+        debug {
+            // Benchmark module is test-only, debug is sufficient
+            isDebuggable = true
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
+    // Specify the target app module to test
+    targetProjectPath = ":app"
+
+    experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
 dependencies {
+    // Macrobenchmark JUnit4
+    implementation("androidx.benchmark:benchmark-macro-junit4:1.2.4")
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.benchmark.macro.junit4)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    testImplementation(kotlin("test"))
+    // AndroidX Test core libraries
+    implementation("androidx.test:runner:1.7.0")
+    implementation("androidx.test:rules:1.7.0")
+
+    // UI Automator for scrolling, clicking, typing
+    implementation("androidx.test.uiautomator:uiautomator:2.3.0")
+
+    implementation("com.google.android.material:material:1.9.0")
+    implementation(libs.androidx.junit.ktx)
 }

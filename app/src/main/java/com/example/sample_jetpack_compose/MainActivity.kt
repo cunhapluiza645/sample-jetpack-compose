@@ -37,7 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -148,14 +151,21 @@ fun MainScreen(navController: NavHostController) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .semantics { contentDescription = "searchInput" }
+                .fillMaxWidth(),
             placeholder = { Text("🔍 Suche nach Name...") }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // Scrollbare Liste
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 60.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 60.dp)
+                .semantics { contentDescription = "recyclerView" },
+        ) {
             items(filteredPersons) { person ->
                 PersonCard(person) {
                     navController.navigate("details/${person.name}/${person.email}/${person.mobile}/${person.imageResId}")
